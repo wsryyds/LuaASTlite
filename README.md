@@ -73,6 +73,7 @@ luac -p main.lua LuaAstlite.lua run_tests.lua src\Lexer\*.lua src\Parser\*.lua s
 已覆盖的核心语法包括：
 
 - 字面量、标识符、表构造、函数调用
+- UTF-8/中文标识符（作为扩展支持）
 - 一元和二元表达式，包含 Lua 5.3 位运算符
 - `local`、赋值、函数声明、匿名函数
 - `if`、`while`、`repeat`、数值 `for`、泛型 `for`

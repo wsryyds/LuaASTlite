@@ -70,6 +70,28 @@ tests[#tests + 1] = {
 }
 
 tests[#tests + 1] = {
+    name = "lexer and parser support utf8 identifiers",
+    run = function()
+        local tokens = LuaAstlite.lex("local 设置控件宽 = 100")
+        assertEqual(tokens[2].type, TokenType.Identifier, "utf8 identifier token type")
+        assertEqual(tokens[2].value, "设置控件宽", "utf8 identifier token value")
+
+        local source = table.concat({
+            "local 控件 = 1",
+            "function 设置控件宽(控件, 宽度)",
+            "    return 宽度",
+            "end",
+            "设置控件宽(控件, 100)"
+        }, "\n")
+        local ast = LuaAstlite.parse(source)
+        assertEqual(ast.type, "Block", "utf8 program ast")
+        assertEqual(ast.body[2].identifier.name, "设置控件宽", "utf8 function name")
+        assertEqual(ast.body[2].params[1].name, "控件", "utf8 first parameter")
+        assertEqual(ast.body[3].expression.base.name, "设置控件宽", "utf8 call name")
+    end
+}
+
+tests[#tests + 1] = {
     name = "lexer rejects bare line break in short string",
     run = function()
         assertFails(function()

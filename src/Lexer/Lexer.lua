@@ -109,15 +109,29 @@ function Lexer:isDigit(char) return char and string.match(char, "%d") end
 --- @return boolean
 function Lexer:isHexDigit(char) return char and string.match(char, "%x") end
 
---- 判断字符是否为字母或下划线
+--- 判断字符是否为非 ASCII 字节
 --- @param char string|nil 待检查的字符
 --- @return boolean
-function Lexer:isAlpha(char) return char and string.match(char, "[%a_]") end
+function Lexer:isNonAsciiByte(char)
+    local byte = char and string.byte(char)
+    return byte ~= nil and byte >= 128
+end
 
---- 判断字符是否为字母、数字或下划线
+--- 判断字符是否为标识符起始字符
 --- @param char string|nil 待检查的字符
 --- @return boolean
-function Lexer:isAlphaNumeric(char) return char and string.match(char, "[%w_]") end
+function Lexer:isAlpha(char)
+    if not char then return false end
+    return string.match(char, "[%a_]") ~= nil or self:isNonAsciiByte(char)
+end
+
+--- 判断字符是否为标识符后续字符
+--- @param char string|nil 待检查的字符
+--- @return boolean
+function Lexer:isAlphaNumeric(char)
+    if not char then return false end
+    return string.match(char, "[%w_]") ~= nil or self:isNonAsciiByte(char)
+end
 
 --- 创建 Token 对象
 --- @param type string Token 类型
